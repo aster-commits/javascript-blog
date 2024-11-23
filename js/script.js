@@ -41,6 +41,7 @@ const optArticleSelector = '.post',
   optTitleSelector = '.post-title',
   optTitleListSelector = '.titles',
   optArticleTagsSelector = '.post-tags .list',
+  optTagsListSelector = '.tags.list',
   optArticleAuthorSelector = '.post-author';
 
 function generateTitleLinks(customSelector = '') {
@@ -93,6 +94,9 @@ function generateTags(){
     tagListElement.innerHTML = '';
   }
 
+  /* [NEW] create a new variable allTags with an empty object */
+  let allTags = {};
+
   /* find all articles */
 
   const articles = document.querySelectorAll (optArticleSelector);
@@ -128,6 +132,17 @@ function generateTags(){
       /* add generated code to html variable */
 
       html = html + tagLink;
+      // console.log(tagLink);
+
+      /* [NEW] check if this link is NOT already in allTags */
+      if(!allTags.hasOwnProperty(tag)){
+        /* [NEW] add generated code to allTags object */
+        allTags[tag] = 1;
+      } else {
+        allTags[tag]++;
+        // console.log(allTags);
+      }
+
     }
     /* END LOOP: for each tag */
 
@@ -135,7 +150,31 @@ function generateTags(){
 
     tagWrapper.innerHTML = html;
 
-  /* END LOOP: for every article: */
+    /* END LOOP: for every article: */
+
+    /* [NEW] find list of tags in right column */
+    const tagList = document.querySelector(optTagsListSelector);
+
+    /* [NEW] add html from allTags to tagList */
+
+    /* [NEW] create variable for all links HTML code */
+
+    let allTagsHTML = '';
+
+    /* [NEW] START LOOP: for each tag in allTags: */
+    for(let tag in allTags){
+
+      /* [NEW] generate code of a link and add it to allTagsHTML */
+      // allTagsHTML += tag + ' (' + allTags[tag] + ') ';
+
+      allTagsHTML += '<li><a href="#tag-' + tag + '"><span>' + tag + ' (' + allTags[tag] + ') ' + '</span></a></li>';
+
+      /* [NEW] END LOOP: for each tag in allTags: */
+    }
+
+    /* [NEW] add html from allTagsHTML to TagList */
+
+    tagList.innerHTML = allTagsHTML;
   }
 }
 
@@ -216,12 +255,6 @@ addClickListenersToTags();
 
 function generateAuthors(){
 
-  /* clear authors list */
-
-  const authorListElements = document.querySelectorAll ('.authors');
-  for (let authorListElement of authorListElements){
-    authorListElement.innerHTML = '';
-  }
   /* find all articles */
   
   const articles = document.querySelectorAll (optArticleSelector);
@@ -259,7 +292,8 @@ function generateAuthors(){
     authorWrapper.innerHTML = html;
     // console.log(authorWrapper);
 
-  /* END LOOP: for every article: */
+    /* END LOOP: for every article: */
+
   }
 }
 
@@ -335,3 +369,4 @@ function addClickListenersToAuthors(){
 }
 
 addClickListenersToAuthors();
+
