@@ -95,7 +95,6 @@ function calculateTagsParams(tags){
 
   /* count min and max value */
   for (let tag in tags){
-    // console.log(tag + ' is used ' + tags[tag] + ' times');
 
     if(tags[tag] > params.max){
       params.max = tags[tag];
@@ -108,14 +107,24 @@ function calculateTagsParams(tags){
   return params;
 }
 
+
+function calculateTagClass(count, params) {
+  
+  const normalizedCount = count - params.min;
+
+  const normalizedMax = params.max - params.min;
+  
+  const percentage = normalizedCount / normalizedMax;
+
+  const classNumber = Math.floor (percentage * (optCloudClassCount - 1) + 1);
+
+  // const tagClass = optCloudClassPrefix + classNumber;
+
+  return optCloudClassPrefix + classNumber;
+}
+
+
 function generateTags(){
-
-  /* remove list contents */
-
-  const tagListElements = document.querySelectorAll (optArticleTagsSelector);
-  for (let tagListElement of tagListElements){
-    tagListElement.innerHTML = '';
-  }
 
   /* [NEW] create a new variable allTags with an empty object */
   let allTags = {};
@@ -155,7 +164,6 @@ function generateTags(){
       /* add generated code to html variable */
 
       html = html + tagLink;
-      // console.log(tagLink);
 
       /* [NEW] check if this link is NOT already in allTags */
       if(!allTags.hasOwnProperty(tag)){
@@ -163,7 +171,6 @@ function generateTags(){
         allTags[tag] = 1;
       } else {
         allTags[tag]++;
-        // console.log(allTags);
       }
 
     }
@@ -183,8 +190,6 @@ function generateTags(){
     /* [NEW] create variable for all links HTML code */
 
     const tagParams = calculateTagsParams(allTags);
-    console.log(allTags);
-    console.log('tagsParams:', tagParams);
 
     let allTagsHTML = '';
 
@@ -192,9 +197,12 @@ function generateTags(){
     for(let tag in allTags){
 
       /* [NEW] generate code of a link and add it to allTagsHTML */
-      // allTagsHTML += tag + ' (' + allTags[tag] + ') ';
 
-      allTagsHTML += '<li><a href="#tag-' + tag + '"><span>' + tag + ' (' + allTags[tag] + ') ' + '</span></a></li>';
+      // const tagLinkHTML = calculateTagClass(allTags[tag], tagParams);
+
+      const tagLinkHTML = '<li><a class = "' + calculateTagClass(allTags[tag], tagParams) + '" href="#tag-' + tag + '"><span>' + tag + ' ' + '</span></a></li>';
+      console.log(tagLinkHTML);
+      allTagsHTML += tagLinkHTML;
 
       /* [NEW] END LOOP: for each tag in allTags: */
     }
@@ -205,11 +213,6 @@ function generateTags(){
   }
 }
 
-function calculateTagClass(count, params) {
-  //////////
-
-
-}
 
 generateTags();
 
@@ -226,12 +229,10 @@ function tagClickHandler(event){
   /* make a new constant "tag" and extract tag from the "href" constant */
 
   const tag = href.replace('#tag-','');
-  console.log(tag);
 
   /* find all tag links with class active */
 
   const activeTags = document.querySelectorAll('a.active[href^="#tag-"]');
-  console.log(activeTags);
 
   /* START LOOP: for each active tag link */
 
@@ -247,7 +248,6 @@ function tagClickHandler(event){
   /* find all tag links with "href" attribute equal to the "href" constant */
 
   const equalTags = document.querySelectorAll('a[href="' + href + '"]');
-  // console.log(equalTags);
 
   /* START LOOP: for each found tag link */
 
@@ -263,7 +263,6 @@ function tagClickHandler(event){
   /* execute function "generateTitleLinks" with article selector as argument */
 
   generateTitleLinks('[data-tags~="' + tag + '"]');
-  console.log(generateTitleLinks);
 
 }
 
@@ -313,17 +312,14 @@ function generateAuthors(){
     const authourSpace = authourTags.replace('-',' ');
 
     const authorLink = '<li><a href="#' + authourTags + '"><span>' + authourSpace + '</span></a></li>';
-    // console.log(authorLink);
 
     /* add generated code to html variable */
 
     html = html + authorLink;
-    // console.log(html);
 
     /* insert HTML of all the links into the authour wrapper */
 
     authorWrapper.innerHTML = html;
-    // console.log(authorWrapper);
 
     /* END LOOP: for every article: */
 
@@ -341,7 +337,6 @@ function authourClickHandler(event){
   /* make a new constant "href" and read the attribute "href" of the clicked element */
 
   const href = clickedElement.getAttribute('href');
-  // console.log(href);
 
   /* make a new constant "tag" and extract tag from the "href" constant */
 
@@ -350,7 +345,6 @@ function authourClickHandler(event){
   /* find all tag links with class active */
 
   const activeAuthors = document.querySelectorAll('.post-author a.active[href^="#"]');
-  console.log(activeAuthors);
 
   /* START LOOP: for each active tag link */
 
@@ -366,14 +360,12 @@ function authourClickHandler(event){
   /* find all tag links with "href" attribute equal to the "href" constant */
 
   const equalAuthors = document.querySelectorAll('a[href="' + href + '"]');
-  console.log(equalAuthors);
 
   /* add class active to found links */
 
   for (let equalAuthor of equalAuthors){
 
     equalAuthor.classList.add('active');
-    // console.log(equalAuthor);
   }
 
   // /* END LOOP: for each found tag link */
