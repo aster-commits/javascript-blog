@@ -4,7 +4,8 @@ const templates = {
   articleLink: Handlebars.compile(document.querySelector('#template-article-link').innerHTML),
   tagLink: Handlebars.compile(document.querySelector('#template-tag-link').innerHTML),
   authorLink: Handlebars.compile(document.querySelector('#template-author-link').innerHTML),
-  tagCloudLink: Handlebars.compile(document.querySelector('template-tag-cloud-link').innerHTML),
+  tagCloudLink: Handlebars.compile(document.querySelector('#template-tag-cloud-link').innerHTML),
+  authorCountLink: Handlebars.compile(document.querySelector('#template-author-count-link').innerHTML),
 };
 
 function titleClickHandler(event){
@@ -207,7 +208,8 @@ function generateTags(){
 
   const tagParams = calculateTagsParams(allTags);
 
-  let allTagsHTML = '';
+  // let allTagsHTML = '';
+  const allTagsData = {tags: []};
 
   /* [NEW] START LOOP: for each tag in allTags: */
   for(let tag in allTags){
@@ -216,15 +218,21 @@ function generateTags(){
 
     // const tagLinkHTML = calculateTagClass(allTags[tag], tagParams);
     
-    const tagLinkHTML = '<li><a class = "' + calculateTagClass(allTags[tag], tagParams) + '" href="#tag-' + tag + '"><span>' + tag + ' ' + '</span></a></li>';
-    allTagsHTML += tagLinkHTML;
+    // const tagLinkHTML = '<li><a class = "' + calculateTagClass(allTags[tag], tagParams) + '" href="#tag-' + tag + '"><span>' + tag + ' ' + '</span></a></li>';
+    // allTagsHTML += tagLinkHTML;
+    allTagsData.tags.push({
+      tag: tag,
+      count: allTags[tag],
+      className: calculateTagClass(allTags[tag], tagParams)
+    });
 
     /* [NEW] END LOOP: for each tag in allTags: */
   }
 
   /* [NEW] add html from allTagsHTML to TagList */
 
-  tagList.innerHTML = allTagsHTML;
+  // tagList.innerHTML = allTagsHTML;
+  tagList.innerHTML = templates.tagCloudLink(allTagsData);
 }
 
 
@@ -357,19 +365,26 @@ function generateAuthors(){
 
   const authorsParams = calculateTagsParams(allAuthors);
 
-  let allAuthorsHTML = '';
+  // let allAuthorsHTML = '';
+  const allAuthorsData = {authors: []};
 
   /* for each author in allAuthors */
   for (let author in allAuthors){
   /* generate code of a link and add it to allAuthorsHTML */
 
-    const authorLinkHTML = '<li><a href="#' + author + '"><span>' + author + ' (' + allAuthors[author] + ') ' + '</span></a></li>';
-    allAuthorsHTML += authorLinkHTML;
+    // const authorLinkHTML = '<li><a href="#' + author + '"><span>' + author + ' (' + allAuthors[author] + ') ' + '</span></a></li>';
+    // allAuthorsHTML += authorLinkHTML;
+
+    allAuthorsData.authors.push({
+      author: author,
+      count:allAuthors[author],
+    });
   }
 
   /* add HTML code */
 
-  authorList.innerHTML = allAuthorsHTML;
+  // authorList.innerHTML = allAuthorsHTML;
+  authorList.innerHTML = templates.authorCountLink(allAuthorsData);
 }
 
 generateAuthors();
