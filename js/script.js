@@ -1,5 +1,12 @@
 'use strict';
 
+const templates = {
+  articleLink: Handlebars.compile(document.querySelector('#template-article-link').innerHTML),
+  tagLink: Handlebars.compile(document.querySelector('#template-tag-link').innerHTML),
+  authorLink: Handlebars.compile(document.querySelector('#template-author-link').innerHTML),
+  tagCloudLink: Handlebars.compile(document.querySelector('template-tag-cloud-link').innerHTML),
+};
+
 function titleClickHandler(event){
   event.preventDefault();
   const clickedElement = this;
@@ -72,7 +79,9 @@ function generateTitleLinks(customSelector = '') {
 
     /* based on the info above create HTML link and save it as const */
 
-    const linkHTML = '<li><a href="#' + articleId + '"><span>' + articleTitle + '</span></a></li>';
+    const linkHTMLData = {id: articleId, title: articleTitle};
+    const linkHTML = templates.articleLink(linkHTMLData);
+    // const linkHTML = '<li><a href="#' + articleId + '"><span>' + articleTitle + '</span></a></li>';
     /* insert created HTML code to the list of links on the left */
 
     html = html + linkHTML;
@@ -154,13 +163,20 @@ function generateTags(){
 
     const articleTagsArray = articleTags.split(' ');
 
+    // const tagLinkHTMLData = {id: articleTags, title: articleTags};
+    // const tagLinkHTML = templates.articleLink(tagLinkHTMLData);
+
+
     /* START LOOP: for each tag */
 
     for (let tag of articleTagsArray){
 
       /* generate HTML of the link */
 
-      const tagLink = '<li><a href="#tag-' + tag + '"><span>' + tag + '</span></a></li>';
+      const linkHTMLData = {id: tag, title: tag};
+      const tagLink = templates.tagLink(linkHTMLData);
+      // const tagLink = '<li><a href="#tag-' + tag + '"><span>' + tag + '</span></a></li>';
+
 
       /* add generated code to html variable */
 
@@ -173,7 +189,6 @@ function generateTags(){
       } else {
         allTags[tag]++;
       }
-
     }
     /* END LOOP: for each tag */
 
@@ -200,7 +215,7 @@ function generateTags(){
     /* [NEW] generate code of a link and add it to allTagsHTML */
 
     // const tagLinkHTML = calculateTagClass(allTags[tag], tagParams);
-
+    
     const tagLinkHTML = '<li><a class = "' + calculateTagClass(allTags[tag], tagParams) + '" href="#tag-' + tag + '"><span>' + tag + ' ' + '</span></a></li>';
     allTagsHTML += tagLinkHTML;
 
@@ -315,11 +330,13 @@ function generateAuthors(){
 
     const authourSpace = authourTags.replace('-',' ');
 
-    const authorLink = '<li><a href="#' + authourTags + '"><span>' + authourSpace + '</span></a></li>';
+    const authorHTMLdata = {id: authourTags, title: authourTags};
+    const authorLinkHTML = templates.articleLink(authorHTMLdata);
+    // const authorLink = '<li><a href="#' + authourTags + '"><span>' + authourSpace + '</span></a></li>';
 
     /* add generated code to html variable */
 
-    html = html + authorLink;
+    html = html + authorLinkHTML;
 
     /* [NEW] check if this link is NOT already in allAuthors */
 
@@ -329,7 +346,6 @@ function generateAuthors(){
     } else {
       allAuthors[authourTags]++;
     }
-    console.log(allAuthors);
     /* insert HTML of all the links into the authour wrapper */
 
     authorWrapper.innerHTML = html;
@@ -340,7 +356,6 @@ function generateAuthors(){
   const authorList = document.querySelector(optAuthorsListSelector);
 
   const authorsParams = calculateTagsParams(allAuthors);
-  console.log(authorsParams);
 
   let allAuthorsHTML = '';
 
@@ -410,11 +425,16 @@ function authourClickHandler(event){
 function addClickListenersToAuthors(){
   /* find all links to tags */
 
+
   const links = document.querySelectorAll ('.authors a[href^="#"]');
+  const links2 = document.querySelectorAll ('.post-author a[href^="#"]');
+
+  const mergedLinks = Array.from(links).concat(Array.from(links2));
+  
 
   /* START LOOP: for each link */
 
-  for (let link of links){
+  for (let link of mergedLinks){
 
     /* add tagClickHandler as event listener for that link */
 
